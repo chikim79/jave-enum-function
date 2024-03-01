@@ -18,24 +18,25 @@ public enum ProductCategory {
 
   BICYCLE(() -> new Box("Extra Large"));
 
-  BoxSupplier boxSupplier;
+  final BoxSupplier boxSupplier;
 
-  WrappingInstruction wrappingInstruction;
+  final Function<Box, Box> wrappingInstruction;
 
   ProductCategory(BoxSupplier boxSupplier) {
-    this(boxSupplier, WrappingInstruction.identity());
+    this(boxSupplier, Function.identity());
   }
 
-  ProductCategory(BoxSupplier boxSupplier, WrappingInstruction... wrappingInstructions) {
+  @SafeVarargs
+  ProductCategory(BoxSupplier boxSupplier, Function<Box, Box>... wrappingInstructions) {
     this.boxSupplier = boxSupplier;
     this.wrappingInstruction =
-        Stream.of(wrappingInstructions).reduce(WrappingInstruction.identity(), WrappingInstruction::andThen);
+        Stream.of(wrappingInstructions).reduce(Function.identity(), Function::andThen);
   }
 
   public Shipment createShipment() {
     Shipment shipment = new Shipment();
     Box box = boxSupplier.get();
-    box = wrappingInstruction.wrap(box);
+    box = wrappingInstruction.apply(box);
     shipment.setBox(box);
     return shipment;
   }
