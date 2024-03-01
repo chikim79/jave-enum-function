@@ -8,4 +8,8 @@ public interface WrappingInstruction {
   default WrappingInstruction andThen(WrappingInstruction after) {
     return (Box from) -> after.wrap(wrap(from));
   }
+
+  static WrappingInstruction identity() {
+    return (Box from) -> from;
+  }
 }

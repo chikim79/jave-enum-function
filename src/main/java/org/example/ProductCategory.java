@@ -14,20 +14,22 @@ public enum ProductCategory {
   DOG_TOY(new UltraSpecialBoxSupplier(), WrappingUtil::addSurvey, WrappingUtil::addFragileSticker),
   CHRISTMAS_PRESENT(
       new UltraSpecialBoxSupplier(), WrappingUtil::addGiftWrap, WrappingUtil::addFragileSticker),
-  GLASSWARE(() -> new Box("Large"), WrappingUtil::addFragileSticker, WrappingUtil::addInsurance);
+  GLASSWARE(() -> new Box("Large"), WrappingUtil::addFragileSticker, WrappingUtil::addInsurance),
+
+  BICYCLE(() -> new Box("Extra Large"));
 
   BoxSupplier boxSupplier;
 
   WrappingInstruction wrappingInstruction;
 
   ProductCategory(BoxSupplier boxSupplier) {
-    this(boxSupplier, box -> box);
+    this(boxSupplier, WrappingInstruction.identity());
   }
 
   ProductCategory(BoxSupplier boxSupplier, WrappingInstruction... wrappingInstructions) {
     this.boxSupplier = boxSupplier;
     this.wrappingInstruction =
-        Stream.of(wrappingInstructions).reduce(box -> box, WrappingInstruction::andThen);
+        Stream.of(wrappingInstructions).reduce(WrappingInstruction.identity(), WrappingInstruction::andThen);
   }
 
   public Shipment createShipment() {
